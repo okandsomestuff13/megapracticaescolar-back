@@ -24,9 +24,13 @@ class AdminView(generics.CreateAPIView):
     #Obtener usuario por ID
     permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
+      #  admin= Administradores.objects.filter(id=request.GET.get("id"), user__is_active=1).first()
+      #lista = AdminSerializer(admin, many=True).data
         admin = get_object_or_404(Administradores, id = request.GET.get("id"))
+        
         admin = AdminSerializer(admin, many=False).data
         # Si todo es correcto, regresamos la información
+        #return Response(lista, 200)
         return Response(admin, 200)
     
     #Registrar nuevo usuario

@@ -11,6 +11,8 @@ from django.contrib.auth.models import Group
 
 
 class AlumnosAll(generics.CreateAPIView):
+    #obetner todos los alumnos y mapearlos
+    #verifica que el usuario este autenticado
     permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         alumnos = Alumnos.objects.filter(user__is_active = 1).order_by("id")
@@ -54,6 +56,7 @@ class AlumnosView(generics.CreateAPIView):
 
             #Create a profile for the user
             alumno = Alumnos.objects.create(user=user,
+                                            id_alumno= request.data["id_alumno"],
                                             matricula= request.data["matricula"],
                                             curp= request.data["curp"].upper(),
                                             rfc= request.data["rfc"].upper(),
