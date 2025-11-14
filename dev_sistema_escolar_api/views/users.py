@@ -22,6 +22,7 @@ class AdminAll(generics.CreateAPIView):
 
 class AdminView(generics.CreateAPIView):
     #Obtener usuario por ID
+    #permission_classes = (permissions.AllowAny,)
     permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
       #  admin= Administradores.objects.filter(id=request.GET.get("id"), user__is_active=1).first()
