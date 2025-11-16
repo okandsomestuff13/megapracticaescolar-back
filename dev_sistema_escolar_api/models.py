@@ -23,7 +23,7 @@ class Administradores(models.Model):
     edad = models.IntegerField(null=True, blank=True)
     ocupacion = models.CharField(max_length=255,null=True, blank=True)
     creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    update = models.DateTimeField(null=True, blank=True)
+    update = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
         return "Perfil del admin "+self.first_name+" "+self.last_name
@@ -34,12 +34,12 @@ class Alumnos(models.Model):
     matricula = models.CharField(max_length=255,null=True, blank=True)
     curp = models.CharField(max_length=255,null=True, blank=True)
     rfc = models.CharField(max_length=255,null=True, blank=True)
-    fecha_nacimiento = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    fecha_nacimiento = models.DateField(auto_now_add=False, null=True, blank=True)
     edad = models.IntegerField(null=True, blank=True)
     telefono = models.CharField(max_length=255, null=True, blank=True)
     ocupacion = models.CharField(max_length=255,null=True, blank=True)
     creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    update = models.DateTimeField(null=True, blank=True)
+    update = models.DateTimeField(auto_now = True, null=True, blank=True)
 
     def __str__(self):
         return "Perfil del alumno "+self.first_name+" "+self.last_name
@@ -48,15 +48,14 @@ class Maestros(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, default=None)
     id_trabajador = models.CharField(max_length=255,null=True, blank=True)
-    fecha_nacimiento = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    fecha_nacimiento = models.DateField(auto_now_add=False, null=True, blank=True)
     telefono = models.CharField(max_length=255, null=True, blank=True)
     rfc = models.CharField(max_length=255,null=True, blank=True)
     cubiculo = models.CharField(max_length=255,null=True, blank=True)
-    edad = models.IntegerField(null=True, blank=True)
     area_investigacion = models.CharField(max_length=255,null=True, blank=True)
     materias_json = models.TextField(null=True, blank=True)
     creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    update = models.DateTimeField(null=True, blank=True)
+    update = models.DateTimeField(auto_now = True, null=True, blank=True)
 
     def __str__(self):
         return "Perfil del maestro "+self.first_name+" "+self.last_name

@@ -22,6 +22,7 @@ class AlumnosAll(generics.CreateAPIView):
     
 class AlumnosView(generics.CreateAPIView):
     #Registrar nuevo usuario
+    permission_classes = (permissions.AllowAny,)
     @transaction.atomic
     def post(self, request, *args, **kwargs):
 
@@ -56,7 +57,6 @@ class AlumnosView(generics.CreateAPIView):
 
             #Create a profile for the user
             alumno = Alumnos.objects.create(user=user,
-                                            id_alumno= request.data["id_alumno"],
                                             matricula= request.data["matricula"],
                                             curp= request.data["curp"].upper(),
                                             rfc= request.data["rfc"].upper(),

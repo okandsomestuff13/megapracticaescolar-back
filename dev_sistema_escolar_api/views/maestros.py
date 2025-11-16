@@ -27,6 +27,7 @@ class MaestrosAll(generics.CreateAPIView):
     
 class MaestrosView(generics.CreateAPIView):
     #Registrar nuevo usuario maestro
+    permission_classes = (permissions.AllowAny,)
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         user = UserSerializer(data=request.data)
