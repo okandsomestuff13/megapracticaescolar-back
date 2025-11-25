@@ -21,17 +21,19 @@ class AdminAll(generics.CreateAPIView):
         return Response(lista, 200)
 
 class AdminView(generics.CreateAPIView):
+    # Permisos por método (sobrescribe el comportamiento default)
+    # Verifica que el usuario esté autenticado para las peticiones GET, PUT y DELETE
+    def get_permissions(self):
+        if self.request.method in ['GET', 'PUT', 'DELETE']:
+            return [permissions.IsAuthenticated()]
+        return []  # POST no requiere autenticación
+    
     #Obtener usuario por ID
-    #permission_classes = (permissions.AllowAny,)
     permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
-      #  admin= Administradores.objects.filter(id=request.GET.get("id"), user__is_active=1).first()
-      #lista = AdminSerializer(admin, many=True).data
         admin = get_object_or_404(Administradores, id = request.GET.get("id"))
-        
         admin = AdminSerializer(admin, many=False).data
         # Si todo es correcto, regresamos la información
-        #return Response(lista, 200)
         return Response(admin, 200)
     
     #Registrar nuevo usuario
@@ -104,3 +106,49 @@ class AdminView(generics.CreateAPIView):
         
         return Response({"message": "Administrador actualizado correctamente", "admin": AdminSerializer(admin).data}, 200)
         # return Response(user,200)
+    
+    # Eliminar administrador con delete (Borrar realmente)
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        admin = get_object_or_404(Administradores, id=request.GET.get("id"))
+        try:
+            admin.user.delete()
+            return Response({"details":"Administrador eliminado"},200)
+        except Exception as e:
+            return Response({"details":"Algo pasó al eliminar"},400)
+
+class TotalUsers(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    
+    #Contar el total de cada tipo de usuarios
+    def get(self, request, *args, **kwargs):
+        # TOTAL ADMINISTRADORES
+        admin_qs = Administradores.objects.filter(user__is_active=True)
+        total_admins = admin_qs.count()
+
+        # TOTAL MAESTROS
+        maestros_qs = Maestros.objects.filter(user__is_active=True)
+        lista_maestros = MaestroSerializer(maestros_qs, many=True).data
+
+        # Convertir materias_json solo si existen maestros
+        for maestro in lista_maestros:
+            try:
+                maestro["materias_json"] = json.loads(maestro["materias_json"])
+            except Exception:
+                maestro["materias_json"] = []  # fallback seguro
+
+        total_maestros = maestros_qs.count()
+
+        # TOTAL ALUMNOS
+        alumnos_qs = Alumnos.objects.filter(user__is_active=True)
+        total_alumnos = alumnos_qs.count()
+
+        # Respuesta final SIEMPRE válida
+        return Response(
+            {
+                "admins": total_admins,
+                "maestros": total_maestros,
+                "alumnos": total_alumnos
+            },
+            status=200
+        )
